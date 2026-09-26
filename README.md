@@ -23,10 +23,10 @@ A dedicated, automated football portfolio and progress tracking web app for **Na
    - Interactive hero profile with jersey #8 badge, club identifiers, and KPI career stat counters.
 
 2. **Official Match History & Team Sheets (`holdkort`)**:
-   - **37 Verified Matches** with Nathaniel's name and jersey #8 recorded on official DBU electronic match sheets.
+   - **46 Verified Matches** with Nathaniel's appearances and jersey #8 recorded across official DBU tournament and winter festival campaigns.
    - Distinct filters for:
      - **U13 (2026/27)**: 6 matches (Liga Øst 3 & Ungdomspokal)
-     - **U12 (2025/26)**: 22 matches (Spring 2026 & Autumn 2025)
+     - **U12 (2025/26)**: 31 matches (Spring 2026, VinterBold 2025/26, & Autumn 2025)
      - **U11 (2024/25)**: 9 matches (Spring 2025)
      - **Home** vs **Away**
    - Full-text search across opponents, venues, and scores.
