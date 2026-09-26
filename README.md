@@ -12,7 +12,7 @@ A dedicated, automated football portfolio and progress tracking web app for **Na
 - **Primary Jersey Number**: #8
 - **Federation**: Dansk Boldspil-Union (DBU) / DBU Sjælland / DBU København
 - **Current Category**: U13 Boys (Liga Øst 3 & Ungdomspokal)
-- **Start Year in GVI**: 2019 (Age 5, U5 Boys)
+- **Start Year in GVI**: 2021 (Age 6, U7 Boys — Official DBU Debut: 2 May 2021)
 
 ---
 
@@ -23,18 +23,18 @@ A dedicated, automated football portfolio and progress tracking web app for **Na
    - Interactive hero profile with jersey #8 badge, club identifiers, and KPI career stat counters.
 
 2. **Official Match History & Team Sheets (`holdkort`)**:
-   - **46 Verified Matches** with Nathaniel's appearances and jersey #8 recorded across official DBU tournament and winter festival campaigns.
+   - **66 Verified Matches** with Nathaniel's appearances recorded across official DBU tournament and winter festival campaigns.
    - Distinct filters for:
      - **U13 (2026/27)**: 6 matches (Liga Øst 3 & Ungdomspokal)
-     - **U12 (2025/26)**: 31 matches (Spring 2026, VinterBold 2025/26, & Autumn 2025)
-     - **U11 (2024/25)**: 9 matches (Spring 2025)
+     - **U12 (2025/26)**: 32 matches (Spring 2026, VinterBold 2025/26, Autumn 2025 & Guest match)
+     - **U11 (2024/25)**: 28 matches (Spring 2025, VinterBold 2024/25 & Autumn 2024)
      - **Home** vs **Away**
    - Full-text search across opponents, venues, and scores.
    - English day & date translation (`Sat`, `Sun`, `Tue`, etc.).
    - One-click links directly to official DBU match protocols (`kampinfo`).
 
-3. **Developmental Journey (2019–2024)**:
-   - Chronological milestones tracking Nathaniel's growth from his first 3v3 mini-pitches without goalkeepers (2019), through 5v5 festivals and Futsal medal tournaments (2021–2023), to the big leap to 8:8 on full pitches (2024) and current elite Liga Øst competition.
+3. **Developmental Journey (2021–2024)**:
+   - Chronological milestones tracking Nathaniel's growth from his very first registered DBU 3v3 mini-pitches on 2 May 2021, through 5v5 small pitch festivals and Futsal medal tournaments (2021–2024), to the transition to 8v8 on half-pitches (2024–2026), and current 11v11 full pitches in elite Liga Øst competition.
    - DBU Children's Football (*Børnefodbold*) privacy explanation regarding why official electronic match sheets start at U11/U12.
 
 4. **100% Automated Backend**:

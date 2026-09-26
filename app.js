@@ -117,10 +117,11 @@ function renderHeroProfile(player, stats, matches) {
       `;
     }
 
+    const startYear = player.first_registered_year || '2021';
     html += `
       <div class="stat-card stat-highlight">
-        <span class="stat-value">2019</span>
-        <span class="stat-label">Started at GVI (U5)</span>
+        <span class="stat-value">${startYear}</span>
+        <span class="stat-label">First DBU Match (U7)</span>
       </div>
     `;
 
