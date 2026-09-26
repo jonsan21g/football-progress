@@ -2,12 +2,15 @@
  * Nathaniel Alexander Sanito - Football Progress Web App
  * Consumes pre-built static dataset from ./data/nathaniel-data.json
  * (Updated automatically by GitHub Actions)
+ * 
+ * Future-Proof & Dynamic:
+ * Automatically scales as Nathaniel advances from U13 to U14, U15, U16 etc.
  */
 
 const state = {
   data: null,
   activeView: 'matches', // 'matches' | 'journey'
-  activeFilter: 'ALL', // 'ALL' | 'U13' | 'U12' | 'U11' | 'HOME' | 'AWAY'
+  activeFilter: 'ALL', // 'ALL' | <Category> | 'HOME' | 'AWAY'
   searchQuery: ''
 };
 
@@ -15,18 +18,15 @@ const state = {
 const elements = {
   heroName: document.getElementById('hero-name'),
   heroJersey: document.getElementById('hero-jersey'),
-  statTotalMatches: document.getElementById('stat-total-matches'),
-  statU13Matches: document.getElementById('stat-u13-matches'),
-  statU12Matches: document.getElementById('stat-u12-matches'),
-  statU11Matches: document.getElementById('stat-u11-matches'),
-  statStartYear: document.getElementById('stat-start-year'),
+  heroCategoryTag: document.getElementById('hero-category-tag'),
+  statsGrid: document.getElementById('hero-stats-grid'),
   tabMatches: document.getElementById('tab-matches'),
   tabJourney: document.getElementById('tab-journey'),
   tabMatchesCount: document.getElementById('tab-matches-count'),
   viewMatches: document.getElementById('view-matches'),
   viewJourney: document.getElementById('view-journey'),
   filteredCount: document.getElementById('filtered-count'),
-  filterPills: document.querySelectorAll('.filter-pill'),
+  seasonPillsContainer: document.getElementById('season-pills'),
   matchSearchInput: document.getElementById('match-search-input'),
   matchesContainer: document.getElementById('matches-container'),
   journeyTimelineContainer: document.getElementById('journey-timeline-container'),
@@ -50,7 +50,8 @@ async function loadPlayerData() {
     const data = await res.json();
     state.data = data;
 
-    renderHeroProfile(data.player, data.career_stats);
+    renderHeroProfile(data.player, data.career_stats, data.matches);
+    renderFilterPills(data.matches);
     renderOpponents(data.matches);
     renderMatches();
     renderDevelopmentalJourney(data.developmental_journey || []);
@@ -75,15 +76,107 @@ async function loadPlayerData() {
   }
 }
 
-function renderHeroProfile(player, stats) {
+function renderHeroProfile(player, stats, matches) {
   if (elements.heroName) elements.heroName.textContent = player.full_name;
   if (elements.heroJersey) elements.heroJersey.textContent = player.primary_jersey || "8";
   
-  if (elements.statTotalMatches) elements.statTotalMatches.textContent = stats.total_matches_tracked;
-  if (elements.statU13Matches) elements.statU13Matches.textContent = stats.u13_matches;
-  if (elements.statU12Matches) elements.statU12Matches.textContent = stats.u12_matches;
-  if (elements.statU11Matches) elements.statU11Matches.textContent = stats.u11_matches;
-  if (elements.statStartYear) elements.statStartYear.textContent = "2019";
+  if (elements.heroCategoryTag) {
+    elements.heroCategoryTag.textContent = `${player.current_category || 'U13 Boys'} (Liga Øst)`;
+  }
+
+  // Dynamic KPI Stats Grid
+  if (elements.statsGrid) {
+    const categoriesTally = stats.categories || {};
+    
+    // Sort categories descending: U15, U14, U13, U12, U11...
+    const sortedCats = Object.keys(categoriesTally).sort((a, b) => {
+      const numA = parseInt(a.replace(/\D/g, ''), 10) || 0;
+      const numB = parseInt(b.replace(/\D/g, ''), 10) || 0;
+      return numB - numA;
+    });
+
+    let html = `
+      <div class="stat-card">
+        <span class="stat-value">${stats.total_matches_tracked || matches.length}</span>
+        <span class="stat-label">Official Lineups</span>
+      </div>
+    `;
+
+    for (const cat of sortedCats) {
+      const count = categoriesTally[cat];
+      const sampleMatch = matches.find(m => m.category === cat);
+      const seasonShort = sampleMatch && sampleMatch.season ? ` (${sampleMatch.season})` : '';
+      html += `
+        <div class="stat-card">
+          <span class="stat-value">${count}</span>
+          <span class="stat-label">${cat} Matches${seasonShort}</span>
+        </div>
+      `;
+    }
+
+    html += `
+      <div class="stat-card stat-highlight">
+        <span class="stat-value">2019</span>
+        <span class="stat-label">Started at GVI (U5)</span>
+      </div>
+    `;
+
+    elements.statsGrid.innerHTML = html;
+  }
+}
+
+/**
+ * Dynamically generate Category filter pills from the data
+ * Automatically creates pills for U13, U14, U15 etc. as new matches arrive
+ */
+function renderFilterPills(matches) {
+  if (!elements.seasonPillsContainer) return;
+
+  const categoryCounts = {};
+  for (const m of matches) {
+    const cat = m.category || 'Youth';
+    categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+  }
+
+  // Sort categories descending
+  const sortedCategories = Object.keys(categoryCounts).sort((a, b) => {
+    const numA = parseInt(a.replace(/\D/g, ''), 10) || 0;
+    const numB = parseInt(b.replace(/\D/g, ''), 10) || 0;
+    return numB - numA;
+  });
+
+  let html = `
+    <button class="filter-pill ${state.activeFilter === 'ALL' ? 'active' : ''}" data-filter="ALL">
+      All Matches (${matches.length})
+    </button>
+  `;
+
+  for (const cat of sortedCategories) {
+    const count = categoryCounts[cat];
+    const sampleMatch = matches.find(m => m.category === cat);
+    const seasonText = sampleMatch && sampleMatch.season ? ` — ${sampleMatch.season}` : '';
+    html += `
+      <button class="filter-pill ${state.activeFilter === cat ? 'active' : ''}" data-filter="${cat}">
+        ${cat}${seasonText} (${count})
+      </button>
+    `;
+  }
+
+  html += `
+    <button class="filter-pill ${state.activeFilter === 'HOME' ? 'active' : ''}" data-filter="HOME">Home</button>
+    <button class="filter-pill ${state.activeFilter === 'AWAY' ? 'active' : ''}" data-filter="AWAY">Away</button>
+  `;
+
+  elements.seasonPillsContainer.innerHTML = html;
+
+  elements.seasonPillsContainer.querySelectorAll('.filter-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      elements.seasonPillsContainer.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      state.activeFilter = pill.dataset.filter;
+      renderMatches();
+    });
+  });
 }
 
 function renderOpponents(matches) {
@@ -149,13 +242,11 @@ function renderMatches() {
 
   const matches = state.data.matches;
   const filtered = matches.filter(m => {
-    // 1. Age Category / Venue Filter
+    // 1. Dynamic Age Category / Venue Filter (works for U13, U14, U15 etc.)
     let passFilter = true;
-    if (state.activeFilter === 'U13') passFilter = m.category === 'U13';
-    else if (state.activeFilter === 'U12') passFilter = m.category === 'U12';
-    else if (state.activeFilter === 'U11') passFilter = m.category === 'U11';
-    else if (state.activeFilter === 'HOME') passFilter = m.is_home;
+    if (state.activeFilter === 'HOME') passFilter = m.is_home;
     else if (state.activeFilter === 'AWAY') passFilter = !m.is_home;
+    else if (state.activeFilter !== 'ALL') passFilter = m.category === state.activeFilter;
 
     // 2. Search Query Filter
     let passSearch = true;
@@ -197,7 +288,12 @@ function renderMatches() {
       outcomeLabel = 'Draw';
     }
 
-    const catClass = m.category === 'U13' ? 'category-u13' : (m.category === 'U12' ? 'category-u12' : 'category-u11');
+    let catClass = 'category-u13';
+    if (m.category === 'U12') catClass = 'category-u12';
+    else if (m.category === 'U11') catClass = 'category-u11';
+    else if (m.category === 'U14') catClass = 'category-u14';
+    else if (m.category === 'U15') catClass = 'category-u15';
+
     const isLatest = idx === 0 && state.activeFilter === 'ALL' && !state.searchQuery;
     const formattedDate = formatDisplayDate(m.date);
 
@@ -316,16 +412,6 @@ function setupEventListeners() {
     elements.tabJourney.addEventListener('click', () => switchView('journey'));
   }
 
-  // Filter Pills (U13, U12, U11, HOME, AWAY)
-  elements.filterPills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      elements.filterPills.forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      state.activeFilter = pill.dataset.filter;
-      renderMatches();
-    });
-  });
-
   // Search Input
   if (elements.matchSearchInput) {
     elements.matchSearchInput.addEventListener('input', (e) => {
@@ -346,4 +432,3 @@ function escapeHtml(str) {
 }
 
 window.addEventListener('DOMContentLoaded', init);
-

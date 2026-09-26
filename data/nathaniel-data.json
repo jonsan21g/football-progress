@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "last_updated_utc": "2026-09-26T12:33:41.781604+00:00",
-    "last_updated_human": "26-09-2026 12:33 UTC"
+    "last_updated_utc": "2026-09-26T12:47:25.344689+00:00",
+    "last_updated_human": "26-09-2026 12:47 UTC"
   },
   "player": {
     "full_name": "Nathaniel Alexander Sanito",
@@ -11,18 +11,23 @@
     "club_id": 1556,
     "birth_year": 2014,
     "current_category": "U13 Boys",
-    "current_team": "GVI U13 Drenge Liga Øst 3 (8:8)",
+    "current_team": "U13 Drenge Liga Øst 3 8:8 efterår (14) 2026",
     "primary_jersey": "8",
     "federation": "DBU Sjælland / DBU København / DSU",
     "seasons_active": [
-      "2026/27 (U13)",
-      "2025/26 (U12)",
-      "2024/25 (U11)"
+      "2026/27",
+      "2025/26",
+      "2024/25"
     ]
   },
   "career_stats": {
     "total_matches_tracked": 37,
     "seasons_tracked": 3,
+    "categories": {
+      "U13": 6,
+      "U12": 22,
+      "U11": 9
+    },
     "u13_matches": 6,
     "u12_matches": 22,
     "u11_matches": 9,
@@ -174,7 +179,7 @@
       "id": "958217",
       "season": "2026/27",
       "category": "U13",
-      "team_name": "GVI U13 Drenge Liga Øst 3",
+      "team_name": "U13 Drenge Liga Øst 3 8:8 efterår (14) 2026",
       "date": "Sat, 26 Sep 2026",
       "raw_date": "lør.26-09 2026",
       "time": "10:00",
@@ -197,7 +202,7 @@
       "id": "958208",
       "season": "2026/27",
       "category": "U13",
-      "team_name": "GVI U13 Drenge Liga Øst 3",
+      "team_name": "U13 Drenge Liga Øst 3 8:8 efterår (14) 2026",
       "date": "Sat, 12 Sep 2026",
       "raw_date": "lør.12-09 2026",
       "time": "10:15",
@@ -220,7 +225,7 @@
       "id": "958204",
       "season": "2026/27",
       "category": "U13",
-      "team_name": "GVI U13 Drenge Liga Øst 3",
+      "team_name": "U13 Drenge Liga Øst 3 8:8 efterår (14) 2026",
       "date": "Sat, 05 Sep 2026",
       "raw_date": "lør.05-09 2026",
       "time": "10:00",
@@ -243,7 +248,7 @@
       "id": "958201",
       "season": "2026/27",
       "category": "U13",
-      "team_name": "GVI U13 Drenge Liga Øst 3",
+      "team_name": "U13 Drenge Liga Øst 3 8:8 efterår (14) 2026",
       "date": "Sat, 29 Aug 2026",
       "raw_date": "lør.29-08 2026",
       "time": "11:30",
@@ -266,7 +271,7 @@
       "id": "382165",
       "season": "2026/27",
       "category": "U13",
-      "team_name": "GVI Ungdomspokal U13",
+      "team_name": "Ungdomspokalen U13 Drenge 8:8 (14) 26/27",
       "date": "Tue, 18 Aug 2026",
       "raw_date": "tirs.18-08 2026",
       "time": "18:30",
@@ -289,7 +294,7 @@
       "id": "957822",
       "season": "2026/27",
       "category": "U13",
-      "team_name": "GVI U13 Drenge Liga Øst 3",
+      "team_name": "U13 Drenge Liga Øst 3 8:8 efterår (14) 2026",
       "date": "Sat, 15 Aug 2026",
       "raw_date": "lør.15-08 2026",
       "time": "14:00",

@@ -3,6 +3,11 @@ DBU Static Data Generator (for GitHub Actions & GitHub Pages)
 Scrapes DBU for Nathaniel Alexander Sanito's GVI teams and match reports,
 outputting static JSON to data/nathaniel-data.json.
 Runs on a scheduled cron (e.g. twice daily) in GitHub Actions.
+
+Features Dynamic Team Discovery:
+Automatically discovers all active and future GVI youth teams matching
+Nathaniel's cohort (14) and age group (U13, U14, U15, etc.) so the scraper
+never gets stale as he progresses through age divisions.
 """
 
 import os
@@ -19,17 +24,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import scraper
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+CLUB_ID = 1556 # Gentofte-Vangede Idrætsforening (GVI)
+PLAYER_BIRTH_YEAR = 2014
 PLAYER_NAME_VARIANTS = ["sanito", "nathaniel"]
 
-# Target teams to monitor for Nathaniel:
-# 2026/27: U13 Drenge (14)
-# 2025/26: U12 Drenge (14) - Autumn 2025 & Spring 2026
-# 2024/25: U11 Drenge (14) - Spring 2025
-TEAMS_TO_MONITOR = [
-    # 2026/27 (U13)
-    {"season": "2026/27", "category": "U13", "label": "GVI U13 Drenge Liga Øst 3", "team_id": 790700, "pool_id": 507586},
-    {"season": "2026/27", "category": "U13", "label": "GVI Ungdomspokal U13", "team_id": 798562, "pool_id": 500765},
-    {"season": "2026/27", "category": "U13", "label": "GVI U13 Drenge 2", "team_id": 798560, "pool_id": 496407},
+# Archived past seasons with fixed historical pool IDs
+HISTORICAL_TEAMS = [
     # 2025/26 (U12)
     {"season": "2025/26", "category": "U12", "label": "GVI U12 Drenge 1 Forår", "team_id": 665072, "pool_id": 489497},
     {"season": "2025/26", "category": "U12", "label": "GVI U12 Drenge 1 Efterår", "team_id": 665072, "pool_id": 456042},
@@ -179,6 +179,71 @@ DEVELOPMENTAL_JOURNEY = [
     }
 ]
 
+def discover_active_teams(club_id=CLUB_ID, birth_year=PLAYER_BIRTH_YEAR):
+    """
+    Dynamically discover all active GVI teams for Nathaniel from DBU's live club page.
+    Automatically handles U13, U14, U15, U16 etc. as Nathaniel grows up.
+    """
+    now = datetime.now()
+    season_start_year = now.year if now.month >= 7 else now.year - 1
+    target_age = season_start_year - birth_year + 1  # 2026: 13 (U13), 2027: 14 (U14), etc.
+    season_label = f"{season_start_year}/{str(season_start_year + 1)[-2:]}"
+    
+    cohort_tag = f"({str(birth_year)[-2:]})" # e.g. '(14)'
+    age_tags = [f"u{target_age}", f"u{target_age + 1}"] # e.g. ['u13', 'u14']
+
+    print(f"Dynamically discovering live teams for GVI (Season {season_label}, Age U{target_age}, Cohort {cohort_tag})...")
+    
+    try:
+        all_teams = scraper.get_club_teams(club_id)
+    except Exception as e:
+        print(f"  Warning: could not fetch live club teams: {e}")
+        return []
+
+    discovered = []
+    seen = set()
+
+    for t in all_teams:
+        cid = t.get("compound_id")
+        if not cid or "_" not in str(cid):
+            continue
+            
+        tname = t.get("team_name", "").lower()
+        pname = t.get("pool_name", "").lower()
+
+        # Exclude girls/women teams
+        if "piger" in tname or "kvinder" in tname or "piger" in pname:
+            continue
+
+        is_relevant = False
+        if cohort_tag in tname or cohort_tag in pname:
+            is_relevant = True
+        elif any(tag in tname for tag in age_tags):
+            is_relevant = True
+        elif "ungdomspokal" in tname or "pokal" in tname:
+            if any(tag in tname for tag in age_tags) or cohort_tag in tname:
+                is_relevant = True
+
+        if is_relevant and cid not in seen:
+            seen.add(cid)
+            # Detect age category
+            cat = f"U{target_age}"
+            cat_match = re.search(r'u(\d{2})', tname)
+            if cat_match:
+                cat = f"U{cat_match.group(1)}"
+
+            parts = cid.split("_")
+            discovered.append({
+                "season": season_label,
+                "category": cat,
+                "label": t["team_name"],
+                "team_id": int(parts[0]),
+                "pool_id": int(parts[1])
+            })
+
+    print(f"  Auto-discovered {len(discovered)} relevant teams for Nathaniel for {season_label}.")
+    return discovered
+
 def matches_player(text):
     if not text:
         return False
@@ -209,13 +274,11 @@ def translate_danish_date(date_str):
     return s
 
 def parse_date(date_str):
-    # Matches dd-mm yyyy or dd Mon yyyy
     m = re.search(r'(\d{2})-(\d{2})\s+(\d{4})', date_str)
     if m:
         d, mo, y = map(int, m.groups())
         return datetime(y, mo, d)
     
-    # Try parsing English format "Sat, 15 Aug 2026"
     m_eng = re.search(r'(\d{2})\s+([A-Za-z]{3})\s+(\d{4})', date_str)
     if m_eng:
         d, mo_str, y = m_eng.groups()
@@ -230,9 +293,29 @@ def run_build():
     now = datetime.now(timezone.utc)
     print(f"=== Starting Nathaniel Sanito DBU Sync at {now.isoformat()} ===")
     
+    # 1. Combine historical teams with dynamically discovered active teams
+    seen_compounds = set()
+    teams_to_scan = []
+
+    for item in HISTORICAL_TEAMS:
+        cid = f"{item['team_id']}_{item['pool_id']}"
+        if cid not in seen_compounds:
+            seen_compounds.add(cid)
+            teams_to_scan.append(item)
+
+    # Dynamic Discovery: fetches current & future seasons automatically (U13, U14, U15...)
+    discovered = discover_active_teams(club_id=CLUB_ID, birth_year=PLAYER_BIRTH_YEAR)
+    for item in discovered:
+        cid = f"{item['team_id']}_{item['pool_id']}"
+        if cid not in seen_compounds:
+            seen_compounds.add(cid)
+            teams_to_scan.append(item)
+
+    print(f"Total teams queued for lineup inspection: {len(teams_to_scan)}")
+
     all_player_matches = []
 
-    for item in TEAMS_TO_MONITOR:
+    for item in teams_to_scan:
         t_label = item["label"]
         team_id = item["team_id"]
         pool_id = item["pool_id"]
@@ -338,9 +421,17 @@ def run_build():
     # Sort latest first
     match_list.sort(key=lambda m: parse_date(m["date"]), reverse=True)
 
-    u13_count = len([m for m in match_list if m["category"] == "U13"])
-    u12_count = len([m for m in match_list if m["category"] == "U12"])
-    u11_count = len([m for m in match_list if m["category"] == "U11"])
+    # Calculate category tallies dynamically
+    category_counts = {}
+    seasons_set = set()
+    for m in match_list:
+        cat = m.get("category", "Youth")
+        category_counts[cat] = category_counts.get(cat, 0) + 1
+        seasons_set.add(m.get("season", ""))
+
+    # Active category (e.g. U13 Boys now, U14 Boys next season)
+    latest_cat = match_list[0]["category"] if match_list else "U13"
+    current_category_label = f"{latest_cat} Boys"
 
     profile_dataset = {
         "metadata": {
@@ -352,20 +443,21 @@ def run_build():
             "short_name": "Nathaniel Sanito",
             "club": "Gentofte-Vangede Idrætsforening (GVI)",
             "club_short": "GVI",
-            "club_id": 1556,
-            "birth_year": 2014,
-            "current_category": "U13 Boys",
-            "current_team": "GVI U13 Drenge Liga Øst 3 (8:8)",
+            "club_id": CLUB_ID,
+            "birth_year": PLAYER_BIRTH_YEAR,
+            "current_category": current_category_label,
+            "current_team": match_list[0]["team_name"] if match_list else "GVI U13 Drenge Liga Øst 3 (8:8)",
             "primary_jersey": "8",
             "federation": "DBU Sjælland / DBU København / DSU",
-            "seasons_active": ["2026/27 (U13)", "2025/26 (U12)", "2024/25 (U11)"]
+            "seasons_active": sorted(list(seasons_set), reverse=True)
         },
         "career_stats": {
             "total_matches_tracked": len(match_list),
-            "seasons_tracked": 3,
-            "u13_matches": u13_count,
-            "u12_matches": u12_count,
-            "u11_matches": u11_count,
+            "seasons_tracked": len(seasons_set),
+            "categories": category_counts,
+            "u13_matches": category_counts.get("U13", 0),
+            "u12_matches": category_counts.get("U12", 0),
+            "u11_matches": category_counts.get("U11", 0),
             "last_match_date": match_list[0]["date"] if match_list else "",
             "opponents_faced_count": len(set(m["opponent"] for m in match_list))
         },
@@ -377,8 +469,8 @@ def run_build():
     with open(out_file, "w", encoding="utf-8") as f:
         json.dump(profile_dataset, f, indent=2, ensure_ascii=False)
 
-    print(f"\n=== Build Complete! Saved {len(match_list)} matches (U13: {u13_count}, U12: {u12_count}, U11: {u11_count}) to {out_file} ===")
+    print(f"\n=== Build Complete! Saved {len(match_list)} matches to {out_file} ===")
+    print(f"Categories tally: {category_counts}")
 
 if __name__ == "__main__":
     run_build()
-
