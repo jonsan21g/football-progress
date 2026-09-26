@@ -218,17 +218,17 @@ def discover_active_teams(club_id=CLUB_ID, birth_year=PLAYER_BIRTH_YEAR):
         is_relevant = False
         if cohort_tag in tname or cohort_tag in pname:
             is_relevant = True
-        elif any(tag in tname for tag in age_tags):
+        elif any(tag in tname or tag in pname for tag in age_tags):
             is_relevant = True
-        elif "ungdomspokal" in tname or "pokal" in tname:
-            if any(tag in tname for tag in age_tags) or cohort_tag in tname:
+        elif any(kw in tname or kw in pname for kw in ["ungdomspokal", "pokal", "vinterbold", "futsal", "forår"]):
+            if any(tag in tname or tag in pname for tag in age_tags) or cohort_tag in tname or cohort_tag in pname:
                 is_relevant = True
 
         if is_relevant and cid not in seen:
             seen.add(cid)
             # Detect age category
             cat = f"U{target_age}"
-            cat_match = re.search(r'u(\d{2})', tname)
+            cat_match = re.search(r'u(\d{2})', tname + " " + pname)
             if cat_match:
                 cat = f"U{cat_match.group(1)}"
 
@@ -292,6 +292,18 @@ def run_build():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     now = datetime.now(timezone.utc)
     print(f"=== Starting Nathaniel Sanito DBU Sync at {now.isoformat()} ===")
+    
+    out_file = os.path.join(OUTPUT_DIR, "nathaniel-data.json")
+    existing_matches = {}
+    if os.path.exists(out_file):
+        try:
+            with open(out_file, "r", encoding="utf-8") as f:
+                cached_data = json.load(f)
+                for m in cached_data.get("matches", []):
+                    existing_matches[m["id"]] = m
+            print(f"Preloaded {len(existing_matches)} verified matches from database.")
+        except Exception as e:
+            print(f"Note: Could not preload existing matches: {e}")
     
     # 1. Combine historical teams with dynamically discovered active teams
     seen_compounds = set()
@@ -412,8 +424,10 @@ def run_build():
         except Exception as e:
             print(f"  Error checking {t_label}: {e}")
 
-    # Remove duplicates if any
-    unique_matches = {}
+    # Merge preloaded database matches with newly scraped matches
+    # Guarantees that matches across autumn, winter, and spring are permanently preserved
+    # even when DBU transitions or unpublishes older tournament pools from GVI's club page
+    unique_matches = dict(existing_matches)
     for m in all_player_matches:
         unique_matches[m["id"]] = m
     match_list = list(unique_matches.values())

@@ -246,6 +246,9 @@ function renderMatches() {
     let passFilter = true;
     if (state.activeFilter === 'HOME') passFilter = m.is_home;
     else if (state.activeFilter === 'AWAY') passFilter = !m.is_home;
+    else if (state.activeFilter === 'U13') passFilter = m.category === 'U13';
+    else if (state.activeFilter === 'U12') passFilter = m.category === 'U12';
+    else if (state.activeFilter === 'U11') passFilter = m.category === 'U11';
     else if (state.activeFilter !== 'ALL') passFilter = m.category === state.activeFilter;
 
     // 2. Search Query Filter
