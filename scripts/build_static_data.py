@@ -18,16 +18,19 @@ OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 PLAYER_NAME_VARIANTS = ["sanito", "nathaniel"]
 
 # Target teams to monitor for Nathaniel:
-# Current Season: U13 Drenge (14)
-# Historical: U12 (14), U11 (14)
+# 2026/27: U13 Drenge (14)
+# 2025/26: U12 Drenge (14) - Autumn 2025 & Spring 2026
+# 2024/25: U11 Drenge (14) - Spring 2025
 TEAMS_TO_MONITOR = [
     # 2026/27 (U13)
-    {"season": "2026/27 (U13)", "category": "U13", "label": "GVI U13 Drenge Liga Øst 3", "team_id": 790700, "pool_id": 507586},
-    {"season": "2026/27 (U13)", "category": "U13", "label": "GVI Ungdomspokal U13", "team_id": 798562, "pool_id": 500765},
-    {"season": "2026/27 (U13)", "category": "U13", "label": "GVI U13 Drenge 2", "team_id": 798560, "pool_id": 496407},
-    # 2025/26 (U12 / U11)
-    {"season": "2025/26 (U12)", "category": "U12", "label": "GVI U12 Drenge 1 Efterår", "team_id": 665072, "pool_id": 456042},
-    {"season": "2025/26 (U11)", "category": "U11", "label": "GVI U11 Drenge 1 Forår", "team_id": 665072, "pool_id": 455967}
+    {"season": "2026/27", "category": "U13", "label": "GVI U13 Drenge Liga Øst 3", "team_id": 790700, "pool_id": 507586},
+    {"season": "2026/27", "category": "U13", "label": "GVI Ungdomspokal U13", "team_id": 798562, "pool_id": 500765},
+    {"season": "2026/27", "category": "U13", "label": "GVI U13 Drenge 2", "team_id": 798560, "pool_id": 496407},
+    # 2025/26 (U12)
+    {"season": "2025/26", "category": "U12", "label": "GVI U12 Drenge 1 Forår", "team_id": 665072, "pool_id": 489497},
+    {"season": "2025/26", "category": "U12", "label": "GVI U12 Drenge 1 Efterår", "team_id": 665072, "pool_id": 456042},
+    # 2024/25 (U11)
+    {"season": "2024/25", "category": "U11", "label": "GVI U11 Drenge 1 Forår", "team_id": 665072, "pool_id": 455967}
 ]
 
 # Verified Developmental Journey (2019–2024 Grassroots & Børnefodbold)
@@ -127,25 +130,39 @@ DEVELOPMENTAL_JOURNEY = [
         "icon": "🚀"
     },
     {
-        "year": "2025",
+        "year": "2024/25",
         "age": "Age 11",
-        "category": "U11 & U12",
+        "category": "U11",
         "format": "8:8 (Official DBU Team Sheets)",
-        "format_badge": "8:8 Lineups",
-        "title": "Official Match Sheets & Jersey #8",
-        "description": "First season with publicly published electronic match rosters and official match scores. Nathaniel establishes his role wearing jersey #8 for GVI.",
+        "format_badge": "U11 8:8",
+        "title": "U11 Official Match Sheets & Roster Debut",
+        "description": "Nathaniel's first official electronic match sheet appearances in Spring 2025, recording 9 official appearances for GVI U11 Drenge 1.",
         "key_tournaments": [
-            "U12 Drenge 1 (14) 8:8 Efterår",
-            "U11 Drenge 1 (14) 8:8 Forår"
+            "U11 Drenge 1 (14) 8:8 Forår (Blue Pool)"
         ],
-        "milestone": "19 officially verified matches on DBU team sheets",
+        "milestone": "9 official matches on DBU team sheets",
+        "icon": "⚽"
+    },
+    {
+        "year": "2025/26",
+        "age": "Age 11–12",
+        "category": "U12",
+        "format": "8:8 (Full Season)",
+        "format_badge": "U12 8:8",
+        "title": "U12 Campaign & Established Jersey #8",
+        "description": "Full 22-match campaign across Autumn 2025 and Spring 2026 as GVI U12 Drenge 1's starting player wearing jersey #8.",
+        "key_tournaments": [
+            "U12 Drenge 1 (14) 8:8 Efterår (Red Pool)",
+            "U12 Drenge 1 (14) 8:8 Forår (Red Pool)"
+        ],
+        "milestone": "22 verified matches on DBU team sheets",
         "icon": "👕"
     },
     {
         "year": "2026/27",
         "age": "Age 12–13",
         "category": "U13",
-        "format": "8:8 / 11:11 (Liga Øst 3 & Pokal)",
+        "format": "8:8 / 11:11 (Liga Øst 3 & Cup)",
         "format_badge": "Liga Øst",
         "title": "Elite Youth: Liga Øst 3 & Youth Cup",
         "description": "Current active season. Highest competitive regional tier across Zealand and Copenhagen against K.B., Frem, Skjold, Frederikssund, Himmelev-Veddelev, Taastrup FC, and more.",
@@ -164,11 +181,44 @@ def matches_player(text):
     t_lower = text.lower()
     return "sanito" in t_lower or "nathaniel" in t_lower
 
+def translate_danish_date(date_str):
+    if not date_str:
+        return ""
+    # "lør.15-08 2026" -> "Sat, 15 Aug 2026"
+    s = date_str.strip()
+    s = re.sub(r'lør\.?|lor\.?', 'Sat', s, flags=re.I)
+    s = re.sub(r'søn\.?|son\.?', 'Sun', s, flags=re.I)
+    s = re.sub(r'man\.?', 'Mon', s, flags=re.I)
+    s = re.sub(r'tirs?\.?', 'Tue', s, flags=re.I)
+    s = re.sub(r'ons\.?', 'Wed', s, flags=re.I)
+    s = re.sub(r'tors?\.?', 'Thu', s, flags=re.I)
+    s = re.sub(r'fre\.?', 'Fri', s, flags=re.I)
+
+    # Format dd-mm yyyy into "Sat, 15 Aug 2026"
+    m = re.match(r'^(Sat|Sun|Mon|Tue|Wed|Thu|Fri)[,\s]*(\d{2})-(\d{2})\s+(\d{4})', s, re.I)
+    if m:
+        months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        day_name, day, month_num, year = m.groups()
+        month_idx = int(month_num) - 1
+        month_name = months[month_idx] if 0 <= month_idx < 12 else month_num
+        return f"{day_name}, {day} {month_name} {year}"
+    return s
+
 def parse_date(date_str):
+    # Matches dd-mm yyyy or dd Mon yyyy
     m = re.search(r'(\d{2})-(\d{2})\s+(\d{4})', date_str)
     if m:
         d, mo, y = map(int, m.groups())
         return datetime(y, mo, d)
+    
+    # Try parsing English format "Sat, 15 Aug 2026"
+    m_eng = re.search(r'(\d{2})\s+([A-Za-z]{3})\s+(\d{4})', date_str)
+    if m_eng:
+        d, mo_str, y = m_eng.groups()
+        months = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6, 'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
+        mo = months.get(mo_str.lower(), 1)
+        return datetime(int(y), mo, int(d))
+
     return datetime(2020, 1, 1)
 
 def run_build():
@@ -242,13 +292,15 @@ def run_build():
                             except ValueError:
                                 pass
 
-                        print(f"  >>> FOUND MATCH #{match_no}: {m['home_team']} vs {m['away_team']} ({m['date']}) -> {m['result']}")
+                        eng_date = translate_danish_date(m["date"])
+                        print(f"  >>> FOUND MATCH #{match_no}: {m['home_team']} vs {m['away_team']} ({eng_date}) -> {m['result']}")
                         all_player_matches.append({
                             "id": match_no,
                             "season": season,
                             "category": category,
                             "team_name": t_label,
-                            "date": m["date"],
+                            "date": eng_date,
+                            "raw_date": m["date"],
                             "time": m["time"],
                             "date_time": m.get("date_time", ""),
                             "home_team": m["home_team"],
@@ -266,7 +318,7 @@ def run_build():
                             "dbu_url": url
                         })
 
-                    time.sleep(0.15)
+                    time.sleep(0.12)
                 except Exception as match_err:
                     print(f"    Failed match {match_no}: {match_err}")
 
@@ -281,6 +333,10 @@ def run_build():
 
     # Sort latest first
     match_list.sort(key=lambda m: parse_date(m["date"]), reverse=True)
+
+    u13_count = len([m for m in match_list if m["category"] == "U13"])
+    u12_count = len([m for m in match_list if m["category"] == "U12"])
+    u11_count = len([m for m in match_list if m["category"] == "U11"])
 
     profile_dataset = {
         "metadata": {
@@ -302,9 +358,10 @@ def run_build():
         },
         "career_stats": {
             "total_matches_tracked": len(match_list),
-            "seasons_tracked": 2,
-            "current_season_matches": len([m for m in match_list if "2026/27" in m["season"]]),
-            "historical_matches": len([m for m in match_list if "2025/26" in m["season"]]),
+            "seasons_tracked": 3,
+            "u13_matches": u13_count,
+            "u12_matches": u12_count,
+            "u11_matches": u11_count,
             "last_match_date": match_list[0]["date"] if match_list else "",
             "opponents_faced_count": len(set(m["opponent"] for m in match_list))
         },
@@ -316,7 +373,8 @@ def run_build():
     with open(out_file, "w", encoding="utf-8") as f:
         json.dump(profile_dataset, f, indent=2, ensure_ascii=False)
 
-    print(f"\n=== Build Complete! Saved {len(match_list)} matches to {out_file} ===")
+    print(f"\n=== Build Complete! Saved {len(match_list)} matches (U13: {u13_count}, U12: {u12_count}, U11: {u11_count}) to {out_file} ===")
 
 if __name__ == "__main__":
     run_build()
+

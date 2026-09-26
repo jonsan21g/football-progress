@@ -7,7 +7,7 @@
 const state = {
   data: null,
   activeView: 'matches', // 'matches' | 'journey'
-  activeFilter: 'ALL', // 'ALL' | '2026/27' | '2025/26' | 'HOME' | 'AWAY'
+  activeFilter: 'ALL', // 'ALL' | 'U13' | 'U12' | 'U11' | 'HOME' | 'AWAY'
   searchQuery: ''
 };
 
@@ -16,8 +16,9 @@ const elements = {
   heroName: document.getElementById('hero-name'),
   heroJersey: document.getElementById('hero-jersey'),
   statTotalMatches: document.getElementById('stat-total-matches'),
-  statCurrentMatches: document.getElementById('stat-current-matches'),
-  statOpponents: document.getElementById('stat-opponents'),
+  statU13Matches: document.getElementById('stat-u13-matches'),
+  statU12Matches: document.getElementById('stat-u12-matches'),
+  statU11Matches: document.getElementById('stat-u11-matches'),
   statStartYear: document.getElementById('stat-start-year'),
   tabMatches: document.getElementById('tab-matches'),
   tabJourney: document.getElementById('tab-journey'),
@@ -54,18 +55,19 @@ async function loadPlayerData() {
     renderMatches();
     renderDevelopmentalJourney(data.developmental_journey || []);
 
+    const total = data.matches.length;
     if (elements.syncBadge) {
-      elements.syncBadge.textContent = `${data.matches.length} Lineups Tracked`;
+      elements.syncBadge.textContent = `${total} Lineups Tracked`;
     }
     if (elements.tabMatchesCount) {
-      elements.tabMatchesCount.textContent = data.matches.length;
+      elements.tabMatchesCount.textContent = total;
     }
     if (elements.footerSyncTime && data.metadata && data.metadata.last_updated_human) {
       elements.footerSyncTime.textContent = `Last synchronized with DBU: ${data.metadata.last_updated_human}`;
     }
   } catch (err) {
     elements.matchesContainer.innerHTML = `
-      <div style="background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 12px; padding: 1.5rem; text-align: center; color: #fb7185;">
+      <div style="background: rgba(200, 16, 46, 0.08); border: 1px solid #fecaca; border-radius: 12px; padding: 1.5rem; text-align: center; color: #b91c1c;">
         <h3>Could not load data</h3>
         <p style="margin-top: 0.5rem; font-size: 0.9rem;">Please verify that <code>./data/nathaniel-data.json</code> exists.</p>
       </div>
@@ -78,8 +80,9 @@ function renderHeroProfile(player, stats) {
   if (elements.heroJersey) elements.heroJersey.textContent = player.primary_jersey || "8";
   
   if (elements.statTotalMatches) elements.statTotalMatches.textContent = stats.total_matches_tracked;
-  if (elements.statCurrentMatches) elements.statCurrentMatches.textContent = stats.current_season_matches;
-  if (elements.statOpponents) elements.statOpponents.textContent = stats.opponents_faced_count;
+  if (elements.statU13Matches) elements.statU13Matches.textContent = stats.u13_matches;
+  if (elements.statU12Matches) elements.statU12Matches.textContent = stats.u12_matches;
+  if (elements.statU11Matches) elements.statU11Matches.textContent = stats.u11_matches;
   if (elements.statStartYear) elements.statStartYear.textContent = "2019";
 }
 
@@ -104,15 +107,53 @@ function renderOpponents(matches) {
   });
 }
 
+/**
+ * Format date string and translate Danish day abbreviation into English
+ * e.g., "lør.15-08 2026" or "Sat, 15 Aug 2026"
+ */
+function formatDisplayDate(dateStr) {
+  if (!dateStr) return '';
+  let str = dateStr.trim();
+
+  // If already in "Sat, 15 Aug 2026" format, return as-is
+  if (/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s+\d{2}\s+[A-Za-z]{3}\s+\d{4}$/.test(str)) {
+    return str;
+  }
+
+  // Replace Danish day abbreviations with English
+  str = str.replace(/lør\.?|lor\.?/gi, 'Sat')
+           .replace(/søn\.?|son\.?/gi, 'Sun')
+           .replace(/man\.?/gi, 'Mon')
+           .replace(/tirs?\.?/gi, 'Tue')
+           .replace(/ons\.?/gi, 'Wed')
+           .replace(/tors?\.?/gi, 'Thu')
+           .replace(/fre\.?/gi, 'Fri');
+
+  // Format "Sat 15-08 2026" -> "Sat, 15 Aug 2026"
+  const m = str.match(/^(Sat|Sun|Mon|Tue|Wed|Thu|Fri)[,\s]*(\d{2})-(\d{2})\s+(\d{4})/i);
+  if (m) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const dayName = m[1];
+    const day = m[2];
+    const monthIdx = parseInt(m[3], 10) - 1;
+    const year = m[4];
+    const monthName = months[monthIdx] || m[3];
+    return `${dayName}, ${day} ${monthName} ${year}`;
+  }
+
+  return str;
+}
+
 function renderMatches() {
   if (!state.data || !state.data.matches || !elements.matchesContainer) return;
 
   const matches = state.data.matches;
   const filtered = matches.filter(m => {
-    // 1. Season / Venue Filter
+    // 1. Age Category / Venue Filter
     let passFilter = true;
-    if (state.activeFilter === '2026/27') passFilter = m.season.includes('2026/27');
-    else if (state.activeFilter === '2025/26') passFilter = m.season.includes('2025/26');
+    if (state.activeFilter === 'U13') passFilter = m.category === 'U13';
+    else if (state.activeFilter === 'U12') passFilter = m.category === 'U12';
+    else if (state.activeFilter === 'U11') passFilter = m.category === 'U11';
     else if (state.activeFilter === 'HOME') passFilter = m.is_home;
     else if (state.activeFilter === 'AWAY') passFilter = !m.is_home;
 
@@ -156,20 +197,22 @@ function renderMatches() {
       outcomeLabel = 'Draw';
     }
 
+    const catClass = m.category === 'U13' ? 'category-u13' : (m.category === 'U12' ? 'category-u12' : 'category-u11');
     const isLatest = idx === 0 && state.activeFilter === 'ALL' && !state.searchQuery;
+    const formattedDate = formatDisplayDate(m.date);
 
     return `
       <div class="match-item-card ${isLatest ? 'latest-match' : ''}">
         <!-- Col 1: Date & Metadata -->
         <div class="col-meta">
-          <span class="match-date-badge">${escapeHtml(m.date)} ${m.time ? '• ' + escapeHtml(m.time) : ''}</span>
-          <span class="match-season-badge">${escapeHtml(m.season)} ${isLatest ? '• 🌟 Latest' : ''}</span>
+          <span class="match-date-badge">${escapeHtml(formattedDate)}</span>
+          <span class="match-season-badge">${escapeHtml(m.season)} (${escapeHtml(m.category)}) ${isLatest ? '• 🌟 Latest' : ''}</span>
         </div>
 
         <!-- Col 2: Fixture Details -->
         <div class="col-fixture">
           <div class="fixture-header">
-            <span class="category-tag">${escapeHtml(m.team_name)}</span>
+            <span class="category-tag ${catClass}">${escapeHtml(m.team_name)}</span>
             <span class="ha-tag ${m.is_home ? 'ha-home' : 'ha-away'}">${m.is_home ? 'Home' : 'Away'}</span>
           </div>
           <div class="fixture-teams">
@@ -273,7 +316,7 @@ function setupEventListeners() {
     elements.tabJourney.addEventListener('click', () => switchView('journey'));
   }
 
-  // Season Filter Pills
+  // Filter Pills (U13, U12, U11, HOME, AWAY)
   elements.filterPills.forEach(pill => {
     pill.addEventListener('click', () => {
       elements.filterPills.forEach(p => p.classList.remove('active'));
