@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nathaniel Alexander Sanito — Football Journey & DBU Matches</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="top-nav">
+    <div class="container nav-container">
+      <div class="nav-brand">
+        <span class="brand-badge">DBU</span>
+        <div>
+          <span class="nav-title">Nathaniel Sanito</span>
+          <span class="nav-subtitle">Gentofte-Vangede IF (GVI)</span>
+        </div>
+      </div>
+      <div class="nav-badges">
+        <span class="badge badge-gvi">GVI U13 Boys</span>
+        <span class="badge badge-dbu">Liga Øst 3</span>
+        <span class="badge badge-sync" id="sync-badge">DBU Synced</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Player Banner -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-card card">
+        <div class="player-profile">
+          <div class="player-avatar">
+            <div class="jersey-circle">
+              <span class="jersey-num" id="hero-jersey">8</span>
+              <span class="jersey-club">GVI</span>
+            </div>
+          </div>
+          <div class="player-info">
+            <div class="player-tags">
+              <span class="tag tag-accent">Class of 2014</span>
+              <span class="tag tag-dbu">U13 Boys (Liga Øst 3)</span>
+              <span class="tag">DBU Sjælland / DBU København</span>
+            </div>
+            <h1 class="player-name" id="hero-name">Nathaniel Alexander Sanito</h1>
+            <p class="player-desc">
+              Official DBU match appearances, team sheet registrations, and match results for <strong>Gentofte-Vangede Idrætsforening (GVI)</strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Career KPI Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value" id="stat-total-matches">25</span>
+            <span class="stat-label">Official Lineups</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="stat-current-matches">6</span>
+            <span class="stat-label">Matches in 2026/27 (U13)</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="stat-opponents">22</span>
+            <span class="stat-label">Opponents Faced</span>
+          </div>
+          <div class="stat-card stat-highlight">
+            <span class="stat-value" id="stat-start-year">2019</span>
+            <span class="stat-label">Started at GVI (U5–U13)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- View Switcher Tabs -->
+  <section class="container view-switcher-container">
+    <div class="view-tabs" role="tablist">
+      <button class="view-tab active" id="tab-matches" data-view="matches">
+        <span class="tab-icon">⚽</span>
+        <span>Official DBU Matches</span>
+        <span class="tab-badge" id="tab-matches-count">25</span>
+      </button>
+      <button class="view-tab" id="tab-journey" data-view="journey">
+        <span class="tab-icon">🌱</span>
+        <span>Developmental Journey (2019–2024)</span>
+        <span class="tab-badge">U5 ➔ U13</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Main Content: Matches & Timeline -->
+  <main class="container main-layout">
+
+    <!-- VIEW 1: OFFICIAL MATCHES -->
+    <div id="view-matches" class="view-pane active">
+      <!-- Filters & Search Toolbar -->
+      <div class="toolbar-card card">
+        <div class="toolbar-header">
+          <h2>Match History & Lineups</h2>
+          <span id="filtered-count" class="badge">25 matches</span>
+        </div>
+
+        <div class="filter-controls">
+          <!-- Season Filter Pills -->
+          <div class="season-pills" id="season-pills">
+            <button class="filter-pill active" data-filter="ALL">All Seasons (25)</button>
+            <button class="filter-pill" data-filter="2026/27">2026/27 — U13 (6)</button>
+            <button class="filter-pill" data-filter="2025/26">2025/26 — U12 (19)</button>
+            <button class="filter-pill" data-filter="HOME">Home</button>
+            <button class="filter-pill" data-filter="AWAY">Away</button>
+          </div>
+
+          <!-- Search Input -->
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="match-search-input" placeholder="Filter by opponent, venue, or result..." />
+          </div>
+        </div>
+      </div>
+
+      <!-- Match Cards List -->
+      <section id="matches-container" class="matches-grid">
+        <!-- Injected via JavaScript -->
+      </section>
+
+      <!-- Opponents Faced Gallery -->
+      <section class="card opponents-section">
+        <h3>Clubs Faced in DBU Tournaments</h3>
+        <p class="text-muted">Nathaniel has competed against the following 22 clubs across Zealand & Copenhagen:</p>
+        <div id="opponents-cloud" class="opponents-cloud">
+          <!-- Injected via JavaScript -->
+        </div>
+      </section>
+    </div>
+
+    <!-- VIEW 2: DEVELOPMENTAL JOURNEY (2019–2024) -->
+    <div id="view-journey" class="view-pane" style="display: none;">
+      <!-- Journey Header Card -->
+      <div class="card journey-hero-card">
+        <div class="journey-header-content">
+          <div class="journey-badge-pill">GVI Class of 2014 • Player Development</div>
+          <h2>Nathaniel's Football Journey: From U5 to U13</h2>
+          <p class="journey-lead">
+            Follow the journey from his very first 3v3 mini-pitches without goalkeepers in 2019, through 5v5 weekend festivals and Futsal medal tournaments, 
+            to the big transition to 8:8 on full pitches and today's official Liga Øst matches wearing jersey #8.
+          </p>
+        </div>
+
+        <!-- Format Progression Strip -->
+        <div class="progression-strip">
+          <div class="prog-step">
+            <span class="prog-icon">🌱</span>
+            <div class="prog-info">
+              <span class="prog-title">3v3 Mini-Pitches</span>
+              <span class="prog-sub">2019–2020 (U5–U7)</span>
+            </div>
+          </div>
+          <div class="prog-arrow">➔</div>
+          <div class="prog-step">
+            <span class="prog-icon">🥅</span>
+            <div class="prog-info">
+              <span class="prog-title">5v5 Mid-Pitch</span>
+              <span class="prog-sub">2021–2023 (U8–U10)</span>
+            </div>
+          </div>
+          <div class="prog-arrow">➔</div>
+          <div class="prog-step">
+            <span class="prog-icon">🚀</span>
+            <div class="prog-info">
+              <span class="prog-title">8:8 Full Pitch</span>
+              <span class="prog-sub">2024–2025 (U11–U12)</span>
+            </div>
+          </div>
+          <div class="prog-arrow">➔</div>
+          <div class="prog-step prog-highlight">
+            <span class="prog-icon">🏆</span>
+            <div class="prog-info">
+              <span class="prog-title">Liga Øst 3 (8:8 / 11v11)</span>
+              <span class="prog-sub">2026/27 (U13)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DBU Privacy Notice -->
+        <div class="dbu-privacy-notice">
+          <span class="notice-icon">ℹ️</span>
+          <div>
+            <strong>Why do official public lineups begin at U11/U12?</strong>
+            <p>
+              In accordance with DBU Children's Football (<em>Børnefodbold</em>) regulations for U5–U10, official electronic match sheets and league tables are not published publicly to prioritize child welfare, player development, and data privacy. Beginning at U11/U12 and U13 Liga Øst, complete match sheets, lineups, and final scores are officially published by DBU.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chronological Journey Timeline -->
+      <section class="journey-timeline" id="journey-timeline-container">
+        <!-- Injected via JavaScript -->
+      </section>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container footer-content">
+      <p>Data sourced directly from <strong>Dansk Boldspil-Union (DBU)</strong> official match protocols and team sheets.</p>
+      <p class="text-muted" id="footer-sync-time">Automatically updated twice daily via GitHub Actions.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
