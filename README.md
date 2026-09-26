@@ -64,34 +64,6 @@ football-progress/
 
 ---
 
-## 🌐 Deploying to GitHub Pages
-
-### 1. Push to GitHub
-From the `football-progress` folder in terminal:
-```bash
-git remote add origin https://github.com/jonsan21g/football-progress.git
-git push -u origin main
-```
-
-### 2. Enable GitHub Pages
-1. Go to your repository on GitHub: `https://github.com/jonsan21g/football-progress`
-2. Click **Settings** ➔ **Pages** (under the "Code and automation" sidebar).
-3. Under **Build and deployment**:
-   - **Source**: Select `Deploy from a branch`
-   - **Branch**: Select `main` / `/ (root)`
-4. Click **Save**.
-5. Your web app will be live within minutes at:
-   `https://jonsan21g.github.io/football-progress/`
-
-### 3. Automated Scraper Workflow
-- The workflow in `.github/workflows/update-dbu-data.yml` is already configured.
-- Ensure GitHub Actions has write permissions:
-  1. Go to **Settings** ➔ **Actions** ➔ **General**.
-  2. Under **Workflow permissions**, choose **Read and write permissions**.
-  3. Click **Save**.
-
----
-
 ## 💻 Local Development
 
 To run the web app locally:
