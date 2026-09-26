@@ -78,7 +78,10 @@ async function loadPlayerData() {
 
 function renderHeroProfile(player, stats, matches) {
   if (elements.heroName) elements.heroName.textContent = player.full_name;
-  if (elements.heroJersey) elements.heroJersey.textContent = player.primary_jersey || "8";
+  if (elements.heroJersey) {
+    const jersey = player.primary_jersey || "8";
+    elements.heroJersey.textContent = jersey.startsWith("#") ? jersey : `#${jersey}`;
+  }
   
   if (elements.heroCategoryTag) {
     elements.heroCategoryTag.textContent = `${player.current_category || 'U13 Boys'} (Liga Øst)`;
