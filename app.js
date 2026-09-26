@@ -346,3 +346,4 @@ function escapeHtml(str) {
 }
 
 window.addEventListener('DOMContentLoaded', init);
+

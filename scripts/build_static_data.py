@@ -6,12 +6,16 @@ Runs on a scheduled cron (e.g. twice daily) in GitHub Actions.
 """
 
 import os
+import sys
 import json
 import re
 import time
 from datetime import datetime, timezone
 import requests
 from bs4 import BeautifulSoup
+
+# Ensure scripts directory is on sys.path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import scraper
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
