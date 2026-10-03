@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "last_updated_utc": "2026-10-02T21:54:45.438330+00:00",
-    "last_updated_human": "02-10-2026 21:54 UTC"
+    "last_updated_utc": "2026-10-03T11:14:05.627204+00:00",
+    "last_updated_human": "03-10-2026 11:14 UTC"
   },
   "player": {
     "full_name": "Nathaniel Alexander Sanito",
@@ -23,20 +23,20 @@
     ]
   },
   "career_stats": {
-    "total_matches_tracked": 66,
+    "total_matches_tracked": 67,
     "seasons_tracked": 3,
     "categories": {
-      "U13": 6,
+      "U13": 7,
       "U12": 32,
       "U11": 28
     },
-    "u13_matches": 6,
+    "u13_matches": 7,
     "u12_matches": 32,
     "u11_matches": 28,
     "first_registered_year": 2021,
     "grassroots_festival_matches": 46,
-    "last_match_date": "Sat, 26 Sep 2026",
-    "opponents_faced_count": 42
+    "last_match_date": "Sat, 03 Oct 2026",
+    "opponents_faced_count": 43
   },
   "developmental_journey": [
     {
@@ -151,6 +151,29 @@
     }
   ],
   "matches": [
+    {
+      "id": "958229",
+      "season": "2026/27",
+      "category": "U13",
+      "team_name": "U13 Drenge Liga Øst 3 8:8 efterår (14) 2026",
+      "date": "Sat, 03 Oct 2026",
+      "raw_date": "lør.03-10 2026",
+      "time": "12:00",
+      "date_time": "lør.03-10 2026 12:00",
+      "home_team": "Lyngby Boldklub 1921 (2)",
+      "away_team": "GVI",
+      "is_home": false,
+      "opponent": "Lyngby Boldklub 1921 (2)",
+      "venue": "Lyngby Stadion",
+      "status": "UPCOMING",
+      "result": "Played",
+      "gvi_score": null,
+      "opponent_score": null,
+      "outcome": "FINISHED",
+      "jersey_number": "19",
+      "role": "Player / Roster",
+      "dbu_url": "https://www.dbu.dk/resultater/kamp/958229_507586/kampinfo"
+    },
     {
       "id": "958217",
       "season": "2026/27",
