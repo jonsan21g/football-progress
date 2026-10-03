@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "last_updated_utc": "2026-10-03T11:14:05.627204+00:00",
-    "last_updated_human": "03-10-2026 11:14 UTC"
+    "last_updated_utc": "2026-10-03T20:41:59.938339+00:00",
+    "last_updated_human": "03-10-2026 20:41 UTC"
   },
   "player": {
     "full_name": "Nathaniel Alexander Sanito",
@@ -165,11 +165,11 @@
       "is_home": false,
       "opponent": "Lyngby Boldklub 1921 (2)",
       "venue": "Lyngby Stadion",
-      "status": "UPCOMING",
-      "result": "Played",
-      "gvi_score": null,
-      "opponent_score": null,
-      "outcome": "FINISHED",
+      "status": "FINISHED",
+      "result": "3-4",
+      "gvi_score": 4,
+      "opponent_score": 3,
+      "outcome": "WIN",
       "jersey_number": "19",
       "role": "Player / Roster",
       "dbu_url": "https://www.dbu.dk/resultater/kamp/958229_507586/kampinfo"
